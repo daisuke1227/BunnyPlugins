@@ -46,7 +46,11 @@ export const activityTypePreview = {
     5: 'Competing in',
 }
 
+// Force update function for settings
 export let forceUpdateSettings: () => void
+// Force update function for Live Raw Activity View – ensure this is assigned in the LiveRawActivityView component
+export let forceUpdateLiveRawActivityView: () => void = () => {}
+
 export default () => {
     const navigation = NavigationNative.useNavigation()
     const [_, forceUpdate] = React.useReducer(x => ~x, 0)
@@ -55,7 +59,9 @@ export default () => {
     useProxy(vstorage)
 
     React.useEffect(() => {
-        vstorage.settings.display && dispatchActivityIfPossible()
+        if (vstorage.settings.display) {
+            dispatchActivityIfPossible()
+        }
     }, [JSON.stringify(vstorage.activity.editing), vstorage.settings.display])
 
     managePage({
@@ -70,7 +76,7 @@ export default () => {
                             .map(x => `**\`${x.match}\`**\n — ${x.description}`)
                             .join('\n')}`,
                         confirmText: 'Dismiss',
-                        confirmColor: 'brand' as ButtonColors,
+                        confirmColor: 'brand',
                         onConfirm: () => undefined,
                     })
                 }}
